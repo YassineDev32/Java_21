@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        SONARQUBE_SERVER = 'SonarQubeServer'
+        SONARQUBE_SERVER = 'SonarQubeServer'  // Name from Manage Jenkins → Configure System → SonarQube Servers
         GIT_CREDENTIALS_ID = 'github_token'
     }
 
@@ -35,7 +35,7 @@ pipeline {
         stage('SonarQube analysis') {
             steps {
                 withSonarQubeEnv("${SONARQUBE_SERVER}") {
-                    sh 'mvn sonar:sonar -Dsonar.host.url=http://157.230.22.29:9000'
+                    sh 'mvn sonar:sonar'
                 }
             }
         }
