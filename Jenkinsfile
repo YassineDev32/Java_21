@@ -3,15 +3,15 @@ pipeline {
 
     environment {
         SONARQUBE_SERVER = 'SonarQubeServer'
-        //GIT_CREDENTIALS_ID = 'github_token'
+        GIT_CREDENTIALS_ID = 'github_token'
     }
 
     stages {
         stage('Checkout') {
             steps {
                 git branch: 'main', 
-                    //credentialsId: "${GIT_CREDENTIALS_ID}", 
-                    url: 'git@github.com:YassineDev32/Java_21.git'
+                    credentialsId: "${GIT_CREDENTIALS_ID}", 
+                    url: 'https://github.com/YassineDev32/Java_21.git'
             }
         }
 
