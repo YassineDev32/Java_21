@@ -6,8 +6,7 @@ pipeline {
         GIT_CREDENTIALS_ID = 'github_token'
         JFROG_URL = 'http://164.92.169.9:8081/artifactory'
         JFROG_REPO = 'docker-local'
-        JFROG_USER = credentials('jfrog_user')
-        JFROG_PASS = credentials('jfrog_pass')
+        JFROG_CREDENTIALS = credentials('jfrog_credentials_id')
         IMAGE_NAME = 'myapp'
     }
 
@@ -62,10 +61,10 @@ pipeline {
 
         stage('Push to JFrog Artifactory') {
             steps {
-                sh '''
-                    echo "$JFROG_PASS" | docker login $JFROG_URL --username "$JFROG_USER" --password-stdin
-                    docker push $JFROG_URL/$JFROG_REPO/$IMAGE_NAME:latest
-                '''
+                sh """
+                    echo "${JFROG_CREDENTIALS_PSW}" | docker login ${JFROG_URL} --username "${JFROG_CREDENTIALS_USR}" --password-stdin
+                    docker push ${JFROG_URL}/${JFROG_REPO}/${IMAGE_NAME}:latest
+                """
             }
         }
     }
