@@ -17,17 +17,13 @@ pipeline {
 
         stage('Build') {
             steps {
-                withMaven(maven: 'Maven3') {
-                    sh 'mvn clean compile'
-                }
+                sh 'mvn clean compile'
             }
         }
 
         stage('Test') {
             steps {
-                withMaven(maven: 'Maven3') {
-                    sh 'mvn test'
-                }
+                sh 'mvn test'
             }
             post {
                 always {
