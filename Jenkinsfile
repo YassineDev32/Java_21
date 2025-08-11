@@ -4,7 +4,7 @@ pipeline {
     environment {
         SONARQUBE_SERVER = 'SonarQubeServer'  // Name from Manage Jenkins → Configure System → SonarQube Servers
         GIT_CREDENTIALS_ID = 'github_token'
-        JFROG_URL = '164.92.169.9:8081/artifactory'
+        JFROG_URL = '164.92.169.9:8081'
         JFROG_REPO = 'docker-local'
         JFROG_CREDENTIALS = credentials('jfrog_credentials_id')
         IMAGE_NAME = 'myapp'
