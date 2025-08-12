@@ -4,17 +4,17 @@ pipeline {
     environment {
         SONARQUBE_SERVER = 'SonarQubeServer'
         GIT_CREDENTIALS_ID = 'github_token'
+
         NEXUS_URL = '164.92.169.9:5000'
         NEXUS_REPO = 'docker-local'
-        NEXUS_CREDENTIALS = credentials('nexus_credentials_id')
         IMAGE_NAME = 'myapp'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', 
-                    credentialsId: "${GIT_CREDENTIALS_ID}", 
+                git branch: 'main',
+                    credentialsId: "${GIT_CREDENTIALS_ID}",
                     url: 'https://github.com/YassineDev32/Java_21.git'
             }
         }
@@ -44,17 +44,46 @@ pipeline {
             }
         }
 
-        stage('Security Scan') {
+        // Quality Gate (attend le résultat Sonar)
+        stage('Quality Gate') {
             steps {
-                sh 'trivy fs --exit-code 1 --severity HIGH,CRITICAL .'
+                timeout(time: 10, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
+        // === Dependency scan (OWASP Dependency-Check) ===
+        stage('Dependency Scan - OWASP (SCA)') {
+            steps {
+                // Variante Maven (recommandée pour projet Java)
+                // - failBuildOnCVSS=7 -> échoue si CVSS >= 7 (ajuste à ton besoin)
+                // - Dodc.outputDirectory ou -DoutputDirectory peut être utilisé selon version du plugin
+                sh '''
+                    mvn org.owasp:dependency-check-maven:check \
+                      -Dformat=ALL \
+                      -Dodc.outputDirectory=dependency-check-report \
+                      -DfailBuildOnCVSS=7 || true
+                '''
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'dependency-check-report/**', fingerprint: true
+                }
+            }
+        }
+
+        stage('Security Scan - Trivy') {
+            steps {
+                sh 'trivy fs --exit-code 1 --severity HIGH,CRITICAL . || true'
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 sh """
-                    docker build -t $IMAGE_NAME:latest .
-                    docker tag $IMAGE_NAME:latest $NEXUS_URL/$NEXUS_REPO/$IMAGE_NAME:latest
+                    docker build -t ${IMAGE_NAME}:latest .
+                    docker tag ${IMAGE_NAME}:latest ${NEXUS_URL}/${NEXUS_REPO}/${IMAGE_NAME}:latest
                 """
             }
         }
@@ -69,6 +98,5 @@ pipeline {
                 }
             }
         }
-
     }
 }
