@@ -4,7 +4,7 @@ pipeline {
     environment {
         SONARQUBE_SERVER = 'SonarQubeServer'
         GIT_CREDENTIALS_ID = 'github_token'
-        NEXUS_URL = '164.92.169.9:8081'
+        NEXUS_URL = '164.92.169.9:5000'
         NEXUS_REPO = 'docker-local'
         NEXUS_CREDENTIALS = credentials('nexus_credentials_id')
         IMAGE_NAME = 'myapp'
