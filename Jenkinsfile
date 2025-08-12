@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     environment {
-        SONARQUBE_SERVER = 'SonarQubeServer'  // Name from Manage Jenkins → Configure System → SonarQube Servers
+        SONARQUBE_SERVER = 'SonarQubeServer'
         GIT_CREDENTIALS_ID = 'github_token'
-        JFROG_URL = '164.92.169.9:8081'
-        JFROG_REPO = 'docker-local'
-        JFROG_CREDENTIALS = credentials('jfrog_credentials_id')
+        NEXUS_URL = '164.92.169.9:8081'
+        NEXUS_REPO = 'docker-local'
+        NEXUS_CREDENTIALS = credentials('nexus_credentials_id')
         IMAGE_NAME = 'myapp'
     }
 
@@ -52,18 +52,18 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh '''
+                sh """
                     docker build -t $IMAGE_NAME:latest .
-                    docker tag $IMAGE_NAME:latest $JFROG_URL/$JFROG_REPO/$IMAGE_NAME:latest
-                '''
+                    docker tag $IMAGE_NAME:latest $NEXUS_URL/$NEXUS_REPO/$IMAGE_NAME:latest
+                """
             }
         }
 
-        stage('Push to JFrog Artifactory') {
+        stage('Push to Nexus') {
             steps {
                 sh """
-                    echo "${JFROG_CREDENTIALS_PSW}" | docker login ${JFROG_URL} --username "${JFROG_CREDENTIALS_USR}" --password-stdin
-                    docker push ${JFROG_URL}/${JFROG_REPO}/${IMAGE_NAME}:latest
+                    echo "${NEXUS_CREDENTIALS_PSW}" | docker login $NEXUS_URL --username "${NEXUS_CREDENTIALS_USR}" --password-stdin
+                    docker push $NEXUS_URL/$NEXUS_REPO/$IMAGE_NAME:latest
                 """
             }
         }
