@@ -88,7 +88,7 @@ pipeline {
             }
         }
 
-        stage('Security Scan - Trivy') {
+        stage('Security Scan image - Trivy') {
             steps {
                 sh "trivy image --exit-code 1 --severity HIGH,CRITICAL ${NEXUS_URL}/${NEXUS_REPO}/${IMAGE_NAME}:latest || true"
             }
