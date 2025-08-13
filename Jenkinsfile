@@ -88,6 +88,12 @@ pipeline {
             }
         }
 
+        stage('Security Scan - Trivy') {
+            steps {
+                sh "trivy image --exit-code 1 --severity HIGH,CRITICAL ${NEXUS_URL}/${NEXUS_REPO}/${IMAGE_NAME}:latest || true"
+            }
+        }
+
         stage('Push to Nexus') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'nexus_credentials_id', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
