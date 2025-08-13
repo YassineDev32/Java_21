@@ -108,7 +108,7 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'ansible_credentials', usernameVariable: 'ANSIBLE_USER', passwordVariable: 'ANSIBLE_PASS')]) {
                     sh '''
-                        ansible-playbook -i app-server, deploy-app.yml \
+                        ansible-playbook -i app-server, ansible/deploy-app.yml \
                             -u $ANSIBLE_USER --extra-vars "NEXUS_USER=$NEXUS_USER NEXUS_PASS=$NEXUS_PASS"
                     '''
                 }
