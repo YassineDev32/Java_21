@@ -1,0 +1,35 @@
+---
+- name: Install OpenJDK 17 (SonarQube requirement)
+  apt:
+    name: openjdk-17-jdk
+    state: present
+    update_cache: yes
+
+- name: Run SonarQube container
+  docker_container:
+    name: sonarqube
+    image: sonarqube:lts
+    state: started
+    restart_policy: unless-stopped
+    ports:
+      - "9000:9000"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+
+- name: Download Sonar Scanner CLI
+  get_url:
+    url: https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
+    dest: /tmp/sonar-scanner.zip
+
+- name: Install unzip
+  apt:
+    name: unzip
+    state: present
+    update_cache: yes
+
+- name: Extract Sonar Scanner
+  unarchive:
+    src: /tmp/sonar-scanner.zip
+    dest: /opt/
+    remote_src: yes

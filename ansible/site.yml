@@ -1,0 +1,26 @@
+---
+- hosts: ci
+  become: yes
+  roles:
+    - git
+    - docker
+    - jenkins
+    - sonar
+    - trivy
+
+- hosts: app
+  become: yes
+  roles:
+    - java_app
+    - docker
+    - nexus
+    - vault
+
+- hosts: monitoring
+  become: yes
+  roles:
+    - docker
+    - prometheus
+    - grafana
+    - elasticsearch
+    - kibana

@@ -1,0 +1,46 @@
+---
+- name: Remove old JFrog containers if they exist
+  docker_container:
+    name: "{{ item }}"
+    state: absent
+  loop:
+    - artifactory
+    - xray
+
+- name: Remove old JFrog directories
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /opt/jfrog/artifactory
+    - /opt/jfrog/xray
+
+- name: Create Nexus data directory
+  file:
+    path: /opt/nexus-data
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Run Nexus Repository OSS container
+  docker_container:
+    name: nexus
+    image: sonatype/nexus3
+    state: started
+    restart_policy: unless-stopped
+    published_ports:
+      - "8081:8081"
+      - "5000:5000"
+    volumes:
+      - "/opt/nexus-data:/nexus-data"
+
+
+- name: Configure Docker to allow insecure registry
+  copy:
+    dest: /etc/docker/daemon.json
+    content: |
+      {
+        "insecure-registries": ["{{ ansible_host }}:5000"]
+      }
+  notify: Restart Docker

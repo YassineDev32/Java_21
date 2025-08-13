@@ -1,0 +1,17 @@
+[ci]
+%{ for droplet in droplets ~}
+%{ if droplet.tag == "ci" }${droplet.ip} ansible_user=root
+%{ endif ~}
+%{ endfor ~}
+
+[app]
+%{ for droplet in droplets ~}
+%{ if droplet.tag == "app" }${droplet.ip} ansible_user=root
+%{ endif ~}
+%{ endfor ~}
+
+[monitoring]
+%{ for droplet in droplets ~}
+%{ if droplet.tag == "monitoring" }${droplet.ip} ansible_user=root
+%{ endif ~}
+%{ endfor ~}

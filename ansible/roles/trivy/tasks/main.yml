@@ -1,0 +1,22 @@
+- name: Download Trivy latest release
+  get_url:
+    url: https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.65.0_Linux-64bit.tar.gz
+    dest: /tmp/trivy.tar.gz       # <--- You must specify this!
+    mode: '0644'
+
+- name: Extract Trivy binary
+  unarchive:
+    src: /tmp/trivy.tar.gz
+    dest: /usr/local/bin/
+    remote_src: yes
+    creates: /usr/local/bin/trivy
+
+- name: Ensure trivy binary is executable
+  file:
+    path: /usr/local/bin/trivy
+    mode: '0755'
+
+- name: Remove the archive
+  file:
+    path: /tmp/trivy.tar.gz
+    state: absent

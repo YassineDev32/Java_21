@@ -1,0 +1,27 @@
+---
+- name: Install JFrog CLI
+  shell: curl -fL https://install-cli.jfrog.io | sh
+  args:
+    executable: /bin/bash
+  become: yes
+
+- name: Create directory for JFrog Xray data
+  file:
+    path: /opt/jfrog/xray
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  become: yes
+
+# - name: Run JFrog Xray container
+#   docker_container:
+#     name: xray
+#     image: releases-docker.jfrog.io/jfrog/xray:latest
+#     state: started
+#     restart_policy: unless-stopped
+#     ports:
+#       - "8000:8000"
+#     volumes:
+#       - /opt/jfrog/xray:/var/opt/jfrog/xray
+#   become: yes

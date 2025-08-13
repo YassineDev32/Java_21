@@ -1,0 +1,38 @@
+---
+- name: Add Jenkins repository key
+  ansible.builtin.get_url:
+    url: https://pkg.jenkins.io/debian/jenkins.io.key
+    dest: /usr/share/keyrings/jenkins-keyring.asc
+
+- name: Add Jenkins repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian binary/"
+    state: present
+
+- name: Install OpenJDK 17 and Jenkins
+  ansible.builtin.apt:
+    name:
+      - openjdk-17-jdk
+      - jenkins
+    update_cache: yes
+    state: present
+    
+- name: Install Maven
+  ansible.builtin.apt:
+    name: maven
+    state: present
+
+- name: Check Maven version
+  ansible.builtin.command: mvn -version
+  register: maven_version
+  changed_when: false
+
+- name: Display Maven version
+  ansible.builtin.debug:
+    var: maven_version.stdout
+
+- name: Start and enable Jenkins
+  ansible.builtin.systemd:
+    name: jenkins
+    enabled: yes
+    state: started

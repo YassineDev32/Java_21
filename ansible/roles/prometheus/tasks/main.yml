@@ -1,0 +1,9 @@
+---
+- name: Install Prometheus (Docker)
+  community.docker.docker_container:
+    name: prometheus
+    image: prom/prometheus:latest
+    state: started
+    restart_policy: always
+    ports:
+      - "9090:9090"
