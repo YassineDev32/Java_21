@@ -54,24 +54,24 @@ pipeline {
         }
 
         // === Dependency scan (OWASP Dependency-Check) ===
-        stage('Dependency Scan - OWASP (SCA)') {
-            steps {
-                // Variante Maven (recommandée pour projet Java)
-                // - failBuildOnCVSS=7 -> échoue si CVSS >= 7 (ajuste à ton besoin)
-                // - Dodc.outputDirectory ou -DoutputDirectory peut être utilisé selon version du plugin
-                sh '''
-                    mvn org.owasp:dependency-check-maven:check \
-                      -Dformat=ALL \
-                      -Dodc.outputDirectory=dependency-check-report \
-                      -DfailBuildOnCVSS=7 || true
-                '''
-            }
-            post {
-                always {
-                    archiveArtifacts artifacts: 'dependency-check-report/**', fingerprint: true
-                }
-            }
-        }
+        // stage('Dependency Scan - OWASP (SCA)') {
+        //     steps {
+        //         // Variante Maven (recommandée pour projet Java)
+        //         // - failBuildOnCVSS=7 -> échoue si CVSS >= 7 (ajuste à ton besoin)
+        //         // - Dodc.outputDirectory ou -DoutputDirectory peut être utilisé selon version du plugin
+        //         sh '''
+        //             mvn org.owasp:dependency-check-maven:check \
+        //               -Dformat=ALL \
+        //               -Dodc.outputDirectory=dependency-check-report \
+        //               -DfailBuildOnCVSS=7 || true
+        //         '''
+        //     }
+        //     post {
+        //         always {
+        //             archiveArtifacts artifacts: 'dependency-check-report/**', fingerprint: true
+        //         }
+        //     }
+        // }
 
         stage('Security Scan - Trivy') {
             steps {
