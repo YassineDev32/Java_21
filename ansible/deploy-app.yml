@@ -1,6 +1,6 @@
 ---
 - name: Deploy Docker container on app server
-  hosts: app-server
+  hosts: app
   become: yes
   vars:
     nexus_url: "164.92.169.9:5000"
