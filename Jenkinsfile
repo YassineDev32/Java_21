@@ -104,13 +104,13 @@ pipeline {
                 }
             }
         }
-        stage('Deploy to App Server') {
+        stage('Deploy with Ansible') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'ansible_credentials', usernameVariable: 'ANSIBLE_USER', passwordVariable: 'ANSIBLE_PASS')]) {
-                    sh '''
-                        ansible-playbook -i app-server, ansible/deploy-app.yml \
-                            -u $ANSIBLE_USER --extra-vars "NEXUS_USER=$NEXUS_USER NEXUS_PASS=$NEXUS_PASS"
-                    '''
+                withCredentials([usernamePassword(credentialsId: 'nexus_credentials_id', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
+                    sh """
+                        /usr/bin/ansible-playbook -i app-server, ansible/deploy-app.yml -u root \
+                        --extra-vars "NEXUS_USER=$NEXUS_USER NEXUS_PASS=$NEXUS_PASS"
+                    """
                 }
             }
         }
